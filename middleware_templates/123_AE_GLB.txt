@@ -1,0 +1,97 @@
+# Begin  Global Automation Engineer standard template - Ver 3.0.0 Date 2022-02-25  * Master * Refer xxxxx Begin #
+# Description
+# Software products and versions
+# Supported OS platforms : All Unix/Linux variants.
+# This sudo profile is required on the 'managed systems' associated 
+# to the indicated automation tool set.  Self serve access
+# considerations are 'Not applicable' for this template.
+#
+# Automation Engineer id's may be placed in the 'standard' system 
+# admin group and sudo entry -provided- that entry is consistent 
+# with the tool's needs.  
+# In the event that entry is NOT consistent with the tool needs, then 
+# this template can be used instead.
+#
+#
+# Version control
+#
+# See changelog on Global sudo wiki https://ibm.biz/ChlogMiddlewareTemplates for previous changes
+#
+# Updates in this version:
+#
+# V2.0 - pczaldy@us.ibm.com / jekri@dk.ibm.com - new template - based 
+#       on NA 209_AutomationEngineer_NA template
+# 
+#
+# V2.0.1 - jekri@dk.ibm.com - functional change - Begin and End lines changed to standard 
+#
+# V2.1 - pczaldy@us.ibm.com - DA1.0 to DA2.0/ansible transition - add /bin/sh as required by the tool
+# 
+# V2.2 - pczaldy@us.ibm.com - add shells to enable non-privilege id to non-privilege id su.
+#      	   In order to accomodate the ability to do 'su' from one unprivileged
+#          user to a second unprivileged user, we are going to enable the 
+#          ansible id to 'all shells'.  According to the ansible documentation,
+#          this is necessary.  
+#          ansible tower will be covering the additional 
+#          logging needed for individual accountability when adding the KYNDRYL_SHELLS_ALL.
+#           Net:  This allows 'least privilege.'
+#          The alternative appears to be requiring running more
+#          end point id's to run with full root privilege.
+#          https://docs.ansible.com/ansible/latest/user_guide/become.html
+#	   Caution:  ansible tasks will need the following if they are 
+#           switching between non-privileged users.
+#            become_flags: "-I"
+#            ansible_ssh_pipelining: true
+#
+# V3.0.0 - daniele.palumbo-v-tservices@kyndryl.com - moved the template to Kyndryl
+# 
+# Special instructions for ansible authors changing context from one non-privileged id to second non-privileged id:
+#	   Caution:  ansible tasks will need the following if they are 
+#           switching between non-privileged users.
+#            become_flags: "-I"
+#            ansible_ssh_pipelining: true
+#
+# User Aliases
+#
+# Replace sample group names with real group names for your account.
+#
+# The User_Alias name KYNDRYL_AE_BAU to identify the Alias as an 
+#     Automation Engineer alias
+#
+User_Alias     KYNDRYL_AE_BAU = %automata
+#
+# If a different group name is used, replace
+# %automata with the -group- that contains the account specific 
+# automation ids. 
+
+#----------------------------------------------------------------------
+# Host Aliases 
+#
+# In this template, we assume all systems are managed by the 
+# automation.  Indicate a subset of systems if not all will
+# be managed by automation and a master file is used.
+#
+Host_Alias    KYNDRYL_AE_HOSTS = ALL 
+#
+# ------------- standard content reminder:
+#  This entry uses standard aliases (eg: Cmnd_Alias  KYNDRYL_NONE_EDITOR ) 
+#  which are defined in:   https://ibm.biz/GsudoStdAlias .  Ensure you 
+#  have included all needed standard aliases from this file into the 
+#  /etc/sudoers file.
+#
+# --------------Do not change anything below this line. ---------------
+#
+#---------------------------------------------------------------------
+#
+# KYNDRYL AE command Aliases
+#        
+Cmnd_Alias  KYNDRYL_UNIX_AE_BAU_CMDS = \
+    /usr/bin/su -, /bin/su -, /usr/bin/su - root, /bin/su - root, KYNDRYL_SHELLS_ALL
+
+#
+#
+KYNDRYL_AE_BAU  KYNDRYL_AE_HOSTS = (ALL) NOPASSWD:ALL, \
+                 !KYNDRYL_NONE_SA,KYNDRYL_UNIX_AE_BAU_CMDS, \
+                 !KYNDRYL_SHELLESCAPE_ALL,!KYNDRYL_NONE_EDITOR
+#
+# End  Global Automation Engineer standard template - Ver 3.0.0 Date 2022-02-25  * Master * Refer xxxxx End #
